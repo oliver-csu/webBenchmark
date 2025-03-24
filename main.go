@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/EDDYCJY/fake-useragent"
 	"io"
-	"io/ioutil"
 	"math"
 	"math/rand"
 	"net/http"
@@ -21,8 +20,6 @@ import (
 	"github.com/miekg/dns"
 	"net"
 
-	URL "net/url"
-
 	"github.com/apoorvam/goterminal"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/load"
@@ -32,7 +29,7 @@ import (
 
 const (
 	letterIdxBits = 6
-	letterIdxMask = 1 << letterIdxBits - 1
+	letterIdxMask = 1<<letterIdxBits - 1
 	letterIdxMax  = 63 / letterIdxBits
 )
 
@@ -45,7 +42,6 @@ const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 var SpeedQueue = list.New()
 var SpeedIndex uint64 = 0
-
 
 type header struct {
 	key, value string
@@ -130,13 +126,13 @@ func LeastSquares(x []float64, y []float64) (a float64, b float64) {
 
 func showStat() {
 	initialNetCounter, _ := netstat.IOCounters(true)
-	iplist := ""
-	if customIP !=nil && len(customIP)>0{
-		iplist = customIP.String()
-	}else{
-		u, _ := URL.Parse(*url)
-		iplist = strings.Join(nslookup(u.Hostname(),"8.8.8.8"),",")
-	}
+	// iplist := ""
+	// if customIP != nil && len(customIP) > 0 {
+	// iplist = customIP.String()
+	// } else {
+	// u, _ := URL.Parse(*url)
+	// iplist = strings.Join(nslookup(u.Hostname(), "8.8.8.8"), ",")
+	// }
 
 	for true {
 		percent, _ := cpu.Percent(time.Second, false)
@@ -144,8 +140,8 @@ func showStat() {
 		netCounter, _ := netstat.IOCounters(true)
 		loadStat, _ := load.Avg()
 
-		fmt.Fprintf(TerminalWriter, "URL:%s\n", *url)
-		fmt.Fprintf(TerminalWriter, "IP:%s\n", iplist)
+		// fmt.Fprintf(TerminalWriter, "URL:%s\n", *url)
+		// fmt.Fprintf(TerminalWriter, "IP:%s\n", iplist)
 
 		fmt.Fprintf(TerminalWriter, "CPU:%.3f%% \n", percent)
 		fmt.Fprintf(TerminalWriter, "Memory:%.3f%% \n", memStat.UsedPercent)
@@ -276,7 +272,7 @@ func goFun(Url string, postContent string, Referer string, XforwardFor bool, cus
 		var err1 error = nil
 		client := &http.Client{
 			Transport: transport,
-			Timeout: time.Second*10,
+			Timeout:   time.Second * 10,
 		}
 		if len(postContent) > 0 {
 			request, err1 = http.NewRequest("POST", Url, strings.NewReader(postContent))
@@ -298,19 +294,19 @@ func goFun(Url string, postContent string, Referer string, XforwardFor bool, cus
 			request.Header.Add("X-Real-IP", randomip)
 		}
 
-		if len(headers)>0 {
+		if len(headers) > 0 {
 			for _, head := range headers {
 				headKey := head.key
 				headValue := head.value
-				if strings.HasPrefix(head.key,"Random") {
+				if strings.HasPrefix(head.key, "Random") {
 					count, convErr := strconv.Atoi(strings.ReplaceAll(head.value, "Random", ""))
-					if convErr==nil {
+					if convErr == nil {
 						headKey = RandStringBytesMaskImpr(count)
 					}
 				}
-				if strings.HasPrefix(head.value,"Random"){
+				if strings.HasPrefix(head.value, "Random") {
 					count, convErr := strconv.Atoi(strings.ReplaceAll(head.value, "Random", ""))
-					if convErr==nil {
+					if convErr == nil {
 						headValue = RandStringBytesMaskImpr(count)
 					}
 				}
@@ -323,32 +319,60 @@ func goFun(Url string, postContent string, Referer string, XforwardFor bool, cus
 		if err2 != nil {
 			continue
 		}
-		io.Copy(ioutil.Discard, resp.Body)
+		file := io.Discard
+		// file, e := os.Open("/dev/null")
+		io.Copy(file, resp.Body)
 		resp.Body.Close()
 
 	}
 	wg.Done()
 }
+
 var h = flag.Bool("h", false, "this help")
-var count = flag.Int("c", 16, "concurrent thread for download,default 16")
-var url = flag.String("s", "http://speedtest4.tele2.net/1GB.zip", "target url")
+var count = flag.Int("c", 126, "concurrent thread for download,default 16")
+var url = flag.String("s", "http://issuepcdn.baidupcs.com/issue/netdisk/yunguanjia/BaiduNetdisk_7.39.1.1.exe", "target url")
 var postContent = flag.String("p", "", "post content")
 var referer = flag.String("r", "", "referer url")
-var xforwardfor = flag.Bool("f", true, "randomized X-Forwarded-For and X-Real-IP address")
+var xforwardfor = flag.Bool("f", false, "randomized X-Forwarded-For and X-Real-IP address")
 var TerminalWriter = goterminal.New(os.Stdout)
 var customIP ipArray
 var headers headersList
 
+// 下载链接
+// 星铁pc，星铁apk，崩2，崩3PC完整，原pc，原apk
+var downloadList = []string{
+	"http://editor.cdn.bcebos.com/installer/BaiduEditor(Offline)_6_5_5_8.exe",
+	"http://ai-studio-static-online.cdn.bcebos.com/aistudio/index",
+	"http://bdcdncnc.inter.71edge.com/cdn/pca/20240321/12.3.0.7913/channel/1711009080030/IQIYIsetup_z42.exe",
+	"http://dl-static.iqiyi.com/hz/IQIYIsetup_z42.exe",
+	"http://static-d.iqiyi.com/ext/common/iQIYIMedia_271.dmg",
+	"http://cdn-pcagamecenter.dsgame.iqiyi.com/upload/2/pca/20230228111207/1/iqiyigame13.4.1.0.exe",
+	"http://mbdapp.iqiyi.com/j/ap/iqiyi_20236.apk",
+	"http://mbdapp.iqiyi.com/j/ap/iqiyi_10040.apk",
+	"http://mbdapp.iqiyi.com/j/iqiyi_gpad/iqiyi_10698.apk",
+	"http://mbdapp.iqiyi.com/j/iqiyi_lite/iqiyi_25268.apk",
+	"http://mbdapp.iqiyi.com/j/ps/pps_1066.apk",
+	"http://mbdapp.iqiyi.com/j/qx/iqiyi_10517.apk",
+	"http://mbdapp.iqiyi.com/j/dh/dh_11073.apk",
+	"http://mbdapp.iqiyi.com/j/acg/acg_11052.apk",
+	"http://mbdapp.iqiyi.com/j/ot/com.qiyi.game.live_Android_assembleRelease.apk",
+	"http://mbdapp.iqiyi.com/j/knowledge/knowledge_iqiyiappstore.apk",
+	"http://app.iqiyi.com/lequ/20240306/qiyiguo_official14.2.0.apk",
+	"http://app.iqiyi.com/lequ/20210209/Child-release-one-ertongguanwang-BN100718-tv5.1.1.312424_eb88ea-312424.apk",
+	"http://cdn-haokanapk.baidu.com/haokanapk/apk/baiduhaokan1015351b.apk",
+	"http://downpack.baidu.com/bdhkvideo_AndroidPhone_1030609a.apk",
+}
+
 func usage() {
 	fmt.Fprintf(os.Stderr,
-`webBenchmark version: /0.6
+		`webBenchmark version: /0.6
 Usage: webBenchmark [-c concurrent] [-s target] [-p] [-r refererUrl] [-f] [-i ip]
 
 Options:
 `)
 	flag.PrintDefaults()
 	fmt.Fprintf(os.Stderr,
-`
+		`
 Advanced Example:
 webBenchmark -c 16 -s https://some.website -r https://referer.url -i 10.0.0.1 -i 10.0.0.2 
 	16 concurrent to benchmark https://some.website with https://referer.url directly to ip 10.0.0.1 and 10.0.0.2
@@ -369,7 +393,7 @@ func main() {
 	}
 	routines := *count
 
-	if customIP != nil && len(customIP) > 0 && routines < len(customIP){
+	if customIP != nil && len(customIP) > 0 && routines < len(customIP) {
 		routines = len(customIP)
 	}
 
@@ -380,7 +404,7 @@ func main() {
 	}
 	for i := 0; i < routines; i++ {
 		waitgroup.Add(1)
-		go goFun(*url, *postContent, *referer, *xforwardfor, customIP, &waitgroup)
+		go goFun(downloadList[i%1], *postContent, *referer, *xforwardfor, customIP, &waitgroup)
 	}
 	waitgroup.Wait()
 	TerminalWriter.Reset()
