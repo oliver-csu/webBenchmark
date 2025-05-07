@@ -1,7 +1,7 @@
 FROM alpine
 
 WORKDIR /app
-COPY ./webBenchmark_linux_arm32 /app/netflowFlasher
+COPY ./webBenchmark_linux_amd64 /app/netflowFlasher
 RUN set -eux && sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories && \
     apk --update add tzdata && \
     cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \

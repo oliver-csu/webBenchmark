@@ -341,6 +341,7 @@ var headers headersList
 // 下载链接
 // 星铁pc，星铁apk，崩2，崩3PC完整，原pc，原apk
 var downloadList = []string{
+	"http://wstatic-01-ali.233leyuan.com/ghh/offical-dev/%E5%8F%A3%E8%A2%8B%E6%96%B9%E8%88%9F.exe",
 	"http://editor.cdn.bcebos.com/installer/BaiduEditor(Offline)_6_5_5_8.exe",
 	"http://ai-studio-static-online.cdn.bcebos.com/aistudio/index",
 	"http://bdcdncnc.inter.71edge.com/cdn/pca/20240321/12.3.0.7913/channel/1711009080030/IQIYIsetup_z42.exe",
